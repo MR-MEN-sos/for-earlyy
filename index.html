@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kenangan Kita</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    video#bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100vw;
+      min-height: 100vh;
+      z-index: -1;
+      object-fit: cover;
+    }
+    .photo-stack {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      margin: auto;
+    }
+    .photo-stack img {
+      position: absolute;
+      width: 100%;
+      height: auto;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      opacity: 0;
+    }
+    .photo-stack img.active {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    .caption {
+      margin-top: 0.5rem;
+      font-weight: bold;
+      color: white;
+    }
+    .music-toggle {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.25rem;
+      font-weight: bold;
+      z-index: 10;
+      cursor: pointer;
+    }
+    .nav-button {
+      margin-top: 2rem;
+      padding: 0.5rem 1.5rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 1.25rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="text-white text-center">
+  <video autoplay muted loop id="bg-video">
+    <source src="background-video.mp4" type="video/mp4">
+    Browser tidak mendukung video latar belakang.
+  </video>
+
+  <audio id="bg-music" autoplay loop>
+    <source src="musik.mp3" type="audio/mp3">
+    Browser tidak mendukung audio.
+  </audio>
+
+  <!-- Halaman Sambutan -->
+  <div id="page-sambutan">
+    <header class="py-6 bg-black bg-opacity-50">
+      <h1 class="text-4xl font-bold">Selamat menikmatii err</h1>
+    </header>
+    <main class="p-6">
+      <p class="text-lg">isek ileng momen iki gaa err??.</p>
+      <button onclick="goToPage('gallery')" class="nav-button">pencet iki gae lanjut</button>
+      <button onclick="toggleMusic()" class="music-toggle">
+        <span id="music-label">pencett iki err</span>
+      </button>
+    </main>
+  </div>
+
+  <!-- Halaman Galeri -->
+  <div id="page-gallery" class="hidden">
+    <header class="py-6 bg-black bg-opacity-50">
+      <h1 class="text-3xl font-bold">isekk ileng iki gaa??</h1>
+    </header>
+    <main class="space-y-10 px-4" id="gallery-container"></main>
+    <button onclick="goToPage('thanks')" class="nav-button">terakhirr err</button>
+  </div>
+
+  <!-- Halaman Ucapan -->
+  <div id="page-thanks" class="hidden">
+    <header class="py-6 bg-black bg-opacity-50">
+      <h1 class="text-4xl font-bold">haii err</h1>
+    </header>
+    <main class="p-8 max-w-3xl mx-auto bg-black bg-opacity-60 rounded-xl mt-10 space-y-6">
+      <p>hai er.. ehm pie kabar e? sehat-sehat terus yo er. ehm aku ga yapping akeh" ko aku mok pengen njalok sepuro karo suwon..
+      
+      ehmm sepurane coro iki marakno amu ilfil, sepurane nek pas karo aku ga sesuai karo ekspetasimu, sepurane gae sekabeh e yo?? suwon uws pernah seneng aku er, suwon ws pernah ngeluangno waktu gae aku, suwonn bgt yoo?? aku gaeru kape bales koyo pie</p>
+      <p>ehh iyoo, krungu-krungu aku ws seneng bocah? wkwk selamat yoo.. tak dungakno amu bahagia karo pilihanmu, ehm maff yo aku grng sepenuh e ngelepas amu, tapi ws ono peningkatan ko. aku saiki ws ga berharap amu balek maneh nak aku, tp lek di takoni isek seneng opo ogk, yo.. eru dewe kan? ws yo er ngono ae yappingku. see you next time yo er??.</p>
+      <button onclick="goToPage('sambutan')" class="nav-button">Kembali ke Awal</button>
+    </main>
+  </div>
+
+  <script>
+    // Caption global per foto
+    const captions = {
+      1: "iki fotbar pertama e kene er",
+      2: "iki frist date e kene, tebak iki nandi?",
+      3: "lek iki pas kene cosplay kucing, lucu ga??",
+      4: "aku iki oleh teko ilham, tp jare iki amu seng mgirim, wkwk ojo sungkan er",
+      5: "iki fotbar terakhir e kene sak grng e aku nak bandung er",
+      6: "iko foto paporitku er.",
+      7: "kabeh barang seng pernah kene gae sek mok simpen kan? wkwk simpenen terus yo..??",
+      8: "amboii imutnyeee",
+      9: "biyen kene ngelibas kabeh trend",
+      10: "dunia serasa milik berdua jirr",
+      11: "aku iso ndelok dunia teko motomu loo",
+      12: "poto paporitku part 2",
+      13: "HAHAHA, IKI MOMEN PALING SERU MENURUTKU",
+      14: "medun bis langsung potbarr jirr",
+      15: "foto terakhir sak grng e di omeng anong",
+      16: "angjay, amu cah wedok pertama seng iso akrab karo ibukku",
+      17: "iki pas kene sak grng e tuku dolanan er",
+      18: "angjayy keceene to",
+      19: "seng liyane do leren kabeh kene malah potbar, wkwk ncen sangar og",
+      20: "positip punk",
+      21: "iki pas pertama kaline kene nak wpp",
+      22: "iki pas nak jogja, tp jeneng wisatane iku opo yo? lali eg",
+      23: "wkwk, kene biyen ngono yo??",
+      24: "iki pas ldk, pas iku aku gawakno tasmu barang. wkwk aku to eport (canda)",
+      25: "nah iki pas nak wpp err"
+    };
+
+    function createFrame(frameNum, startIndex) {
+      const frame = document.createElement("section");
+      frame.className = "text-center";
+      let imagesHTML = "";
+
+      for (let i = 0; i < 5; i++) {
+        const index = startIndex + i;
+        const caption = captions[index] || `Kenangan ${index}`;
+        imagesHTML += `
+          <img src="foto${index}.jpg"
+               class="${i === 0 ? 'active' : ''}"
+               alt="${caption}"
+               data-caption="${caption}" />
+        `;
+      }
+
+      frame.innerHTML = `
+        <div class="photo-stack" id="stack${frameNum}">
+          ${imagesHTML}
+        </div>
+        <p class="caption" id="caption${frameNum}">${captions[startIndex]}</p>
+        <button onclick="nextPhoto(${frameNum})" class="nav-button">Lanjut Foto</button>
+      `;
+      return frame;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("gallery-container");
+      for (let j = 0; j < 5; j++) {
+        container.appendChild(createFrame(j + 1, j * 5 + 1));
+      }
+    });
+
+    function nextPhoto(frameNum) {
+      const stack = document.getElementById(`stack${frameNum}`);
+      const images = stack.querySelectorAll("img");
+      let activeIndex = Array.from(images).findIndex(img => img.classList.contains("active"));
+      images[activeIndex].classList.remove("active");
+      let nextIndex = (activeIndex + 1) % images.length;
+      images[nextIndex].classList.add("active");
+
+      const captionText = images[nextIndex].getAttribute("data-caption");
+      document.getElementById(`caption${frameNum}`).textContent = captionText;
+    }
+
+    function goToPage(page) {
+      document.getElementById("page-sambutan").classList.add("hidden");
+      document.getElementById("page-gallery").classList.add("hidden");
+      document.getElementById("page-thanks").classList.add("hidden");
+
+      document.getElementById(`page-${page}`).classList.remove("hidden");
+    }
+
+    function toggleMusic() {
+      const audio = document.getElementById("bg-music");
+      const label = document.getElementById("music-label");
+      if (audio.paused) {
+        audio.play();
+        label.textContent = "Musik for you";
+      } else {
+        audio.pause();
+        label.textContent = "Musik: OFF";
+      }
+    }
+  </script>
+</body>
+</html>
